@@ -36,6 +36,7 @@ namespace Smi.Api
 
             app.UseHttpsRedirection();
             app.UseCorrelationIdMiddleware();
+            app.UseCustomExceptionHandlingMiddleware();
             app.UseMvc();
         }
     }
