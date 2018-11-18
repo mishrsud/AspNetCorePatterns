@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Formatting.Compact;
 
 namespace Smi.Api
 {
@@ -19,6 +16,43 @@ namespace Smi.Api
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .ConfigureLogging(ConfigureSerilog);
+
+        private static void ConfigureSerilog(
+            WebHostBuilderContext webHostBuilderContext, 
+            ILoggingBuilder loggingBuilder)
+        {
+            Log.Logger = CreateLoggerConfiguration(
+                            webHostBuilderContext.Configuration, 
+                            webHostBuilderContext.HostingEnvironment.IsDevelopment())
+                        .CreateLogger();
+
+            loggingBuilder.AddSerilog();
+        }
+
+        /// <remarks>
+        /// https://github.com/serilog/serilog/wiki/Enrichment
+        /// </remarks>
+        private static LoggerConfiguration CreateLoggerConfiguration(
+            IConfiguration configuration,
+            bool developmentEnvironment)
+        {
+            var loggerConfiguration = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .Enrich.FromLogContext()
+                .Enrich.WithMachineName();
+
+            if (developmentEnvironment)
+            {
+                loggerConfiguration.WriteTo.Console();
+            }
+            else
+            {
+                loggerConfiguration.WriteTo.Console(new CompactJsonFormatter());
+            }
+
+            return loggerConfiguration;
+        }
     }
 }

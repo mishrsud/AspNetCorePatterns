@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Smi.Api.Controllers
 {
@@ -10,11 +11,22 @@ namespace Smi.Api.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly ILogger<ValuesController> _logger;
+
+        public ValuesController(ILogger<ValuesController> logger)
+        {
+            _logger = logger;
+        }
+        
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new string[] { "value1", "value2" };
+            using (_logger.BeginScope("{CorrelationId}", HttpContext.TraceIdentifier))
+            {
+                _logger.LogInformation("returning value");
+                return new string[] { "value1", "value2" };
+            }
         }
 
         // GET api/values/5
