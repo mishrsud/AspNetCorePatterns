@@ -17,16 +17,13 @@ namespace Smi.Api.Controllers
         {
             _logger = logger;
         }
-        
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            using (_logger.BeginScope("{CorrelationId}", HttpContext.TraceIdentifier))
-            {
-                _logger.LogInformation("returning value");
-                return new string[] { "value1", "value2" };
-            }
+            _logger.LogInformation("returning value");
+            return new string[] {"value1", "value2"};
         }
 
         // GET api/values/5
