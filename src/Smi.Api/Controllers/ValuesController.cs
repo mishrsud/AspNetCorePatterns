@@ -26,6 +26,18 @@ namespace Smi.Api.Controllers
             return new string[] {"value1", "value2"};
         }
 
+        /// <summary>
+        /// Demonstrates an enpoint that throws exception. This will be caught by the exception handling middleware
+        /// and a problem detail would be returned.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ApplicationException"></exception>
+        [HttpGet("error")]
+        public ActionResult<string> BadMethod()
+        {
+            throw new ApplicationException("boom");
+        }
+
         // GET api/values/5
         [HttpGet("{id}")]
         public ActionResult<string> Get(int id)

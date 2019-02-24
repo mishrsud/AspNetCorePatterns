@@ -46,7 +46,7 @@ namespace Smi.Api.Middleware
                 {
                     new
                     {
-                        Reason = "The server encountered and error while processing this request",
+                        Reason = $"The server encountered and error while processing this request. Correlation id: {httpContext.Response.Headers["Request-Id"]}",
                         Detail = exceptionMessage
                     }
                 }
